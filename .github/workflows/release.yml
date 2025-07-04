@@ -7,14 +7,14 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     name: Release
     steps:
       - uses: actions/checkout@v2
 
       - uses: actions/setup-python@v2
         with:
-          python-version: "3.9"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -29,10 +29,10 @@ jobs:
 
       - name: Apply latest tag
         run: |
-         docker tag ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }} ghcr.io/${{ github.repository_owner }}/ascender-ee:latest
+          docker tag ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }} ghcr.io/${{ github.repository_owner }}/ascender-ee:latest
 
       - name: Push images
         run: |
-         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-         docker push ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }}
-         docker push ghcr.io/${{ github.repository_owner }}/ascender-ee:latest
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+          docker push ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }}
+          docker push ghcr.io/${{ github.repository_owner }}/ascender-ee:latest

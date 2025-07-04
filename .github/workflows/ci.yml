@@ -11,14 +11,14 @@ on:
 
 jobs:
   podman:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     name: Podman
     steps:
       - uses: actions/checkout@v2
 
       - uses: actions/setup-python@v2
         with:
-          python-version: "3.9"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -30,14 +30,14 @@ jobs:
           tox -e podman
 
   docker:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     name: Docker
     steps:
       - uses: actions/checkout@v2
 
       - uses: actions/setup-python@v2
         with:
-          python-version: "3.9"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
