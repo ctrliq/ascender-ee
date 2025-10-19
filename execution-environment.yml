@@ -2,12 +2,13 @@
 version: 3
 images:
   base_image:
-    name: rockylinux:9-minimal
+    name: rockylinux/rockylinux:9-minimal
 options:
   package_manager_path: /usr/bin/microdnf
 dependencies:
   python_interpreter:
     package_system: python3.11
+    python_path: /usr/bin/python3.11
   ansible_core:
     # Avoid Ansible 2.17 and above as it dropped support for Python 3.6, so it will not work with dnf on EL8 or below machines
     package_pip: ansible-core>=2.16.14,<2.17
