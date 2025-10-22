@@ -96,7 +96,6 @@ additional_build_files:
 additional_build_steps:
   append_base:
     - RUN $PYCMD -m pip install -U pip
-    - COPY --chmod=755 _build/files/update-ca-trust /usr/bin/update-ca-trust
   append_final:
     - COPY --from=quay.io/ansible/receptor:devel /usr/bin/receptor /usr/bin/receptor
     - RUN mkdir -p /var/run/receptor
@@ -119,3 +118,5 @@ additional_build_steps:
       && alternatives --install /usr/bin/python python /usr/bin/python3.11 1
       && alternatives --install /usr/bin/pip3 pip3 /usr/bin/pip3.11 1
     - RUN microdnf update -y && microdnf clean all
+    - COPY --chmod=755 _build/files/update-ca-trust /usr/bin/update-ca-trust
+
