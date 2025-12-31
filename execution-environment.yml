@@ -2,7 +2,7 @@
 version: 3
 images:
   base_image:
-    name: rockylinux/rockylinux:9-minimal
+    name: rockylinux/rockylinux:9
 options:
   package_manager_path: /usr/bin/microdnf
 dependencies:
