@@ -4,7 +4,7 @@ images:
   base_image:
     name: rockylinux/rockylinux:9
 options:
-  package_manager_path: /usr/bin/microdnf
+  package_manager_path: /usr/bin/dnf
 dependencies:
   python_interpreter:
     package_system: python3.11
@@ -117,6 +117,6 @@ additional_build_steps:
       RUN alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
       && alternatives --install /usr/bin/python python /usr/bin/python3.11 1
       && alternatives --install /usr/bin/pip3 pip3 /usr/bin/pip3.11 1
-    - RUN microdnf update -y && microdnf clean all
+    - RUN dnf update -y && dnf clean all
     - COPY --chmod=755 _build/files/update-ca-trust /usr/bin/update-ca-trust
 
