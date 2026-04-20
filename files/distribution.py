@@ -52,7 +52,7 @@ class DistributionFiles:
     #  - have a function get_distribution_DISTNAME implemented
     # keep names in sync with Conditionals page of docs
     OSDIST_LIST = (
-        {'path': '/etc/ciq-release', 'name': 'RLCLinux'},
+        {'path': '/etc/ciq-release', 'name': 'RLC'},
         {'path': '/etc/altlinux-release', 'name': 'Altlinux'},
         {'path': '/etc/oracle-release', 'name': 'OracleLinux'},
         {'path': '/etc/slackware-version', 'name': 'Slackware'},
@@ -81,7 +81,7 @@ class DistributionFiles:
     SEARCH_STRING = {
         'OracleLinux': 'Oracle Linux',
         'RedHat': 'Red Hat',
-        'RLCLinux': 'Rocky Linux from CIQ',
+        'RLC': 'Rocky Linux from CIQ',
         'Altlinux': 'ALT',
         'SMGL': 'Source Mage GNU/Linux',
     }
@@ -570,7 +570,7 @@ class Distribution(object):
     OS_FAMILY_MAP = {'RedHat': ['RedHat', 'RHEL', 'Fedora', 'CentOS', 'Scientific', 'SLC',
                                 'Ascendos', 'CloudLinux', 'PSBM', 'OracleLinux', 'OVS',
                                 'OEL', 'Amazon', 'Amzn', 'Virtuozzo', 'XenServer', 'Alibaba',
-                                'EulerOS', 'openEuler', 'AlmaLinux', 'Rocky', 'RLCLinux', 'TencentOS',
+                                'EulerOS', 'openEuler', 'AlmaLinux', 'Rocky', 'RLC', 'TencentOS',
                                 'EuroLinux', 'Kylin Linux Advanced Server', 'MIRACLE'],
                      'Debian': ['Debian', 'Ubuntu', 'Raspbian', 'Neon', 'KDE neon',
                                 'Linux Mint', 'SteamOS', 'Devuan', 'Kali', 'Cumulus Linux',
