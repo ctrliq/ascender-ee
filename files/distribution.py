@@ -43,6 +43,35 @@ def _file_exists(path, allow_empty=False):
     # file exists with some content
     return True
 
+def _get_os_release_data(allow_empty=False):
+    path = '/etc/os-release'
+
+    if not _file_exists(path, allow_empty=allow_empty):
+        return False, None
+
+    data = get_file_content(path)
+
+    os_name     = '';
+    os_variant  = '';
+    os_cpe_name = ''
+
+    for line in data.splitlines():
+        if re.search('^NAME=', line):
+            key, value = line.split('=', 1)
+
+            os_name = value.strip('"')
+
+        elif re.search('^VARIANT=', line):
+            key, value = line.split('=', 1)
+
+            os_variant = value.strip('"')
+
+        elif re.search('^CPE_NAME=', line):
+            key, value = line.split('=', 1)
+
+            os_cpe_name = value.strip('"')
+
+    return True, { 'os_name': os_name, 'os_variant': os_variant, 'os_cpe_name': os_cpe_name }
 
 class DistributionFiles:
     """has-a various distro file parsers (os-release, etc) and logic for finding the right one."""
@@ -108,36 +137,6 @@ class DistributionFiles:
 
         data = self._get_file_content(path)
         return True, data
-
-    def _get_os_release_data(self, allow_empty=False):
-        path = '/etc/os-release'
-
-        if not _file_exists(path, allow_empty=allow_empty):
-            return False, None
-
-        data = self._get_file_content(path)
-
-        os_name     = '';
-        os_variant  = '';
-        os_cpe_name = ''
-
-        for line in data.splitlines():
-            if re.search('^NAME=', line):
-                key, value = line.split('=', 1)
-
-                os_name = value.strip('"')
-
-            elif re.search('^VARIANT=', line):
-                key, value = line.split('=', 1)
-
-                os_variant = value.strip('"')
-
-            elif re.search('^CPE_NAME=', line):
-                key, value = line.split('=', 1)
-
-                os_cpe_name = value.strip('"')
-
-        return True, { 'os_name': os_name, 'os_variant': os_variant, 'os_cpe_name': os_cpe_name }
 
     def _parse_dist_file(self, name, dist_file_content, path, collected_facts):
         dist_file_dict = {}
@@ -237,7 +236,7 @@ class DistributionFiles:
                 dist_file_facts['distribution_file_parsed'] = parsed_dist_file
 
                 # Always look for into standard /etc/os-release file if it exists
-                os_release_exists, os_release_data = self._get_os_release_data()
+                os_release_exists, os_release_data = _get_os_release_data()
 
                 if os_release_exists != False:
                     dist_file_facts['distribution_os_name'] = os_release_data['os_name']
@@ -674,9 +673,19 @@ class Distribution(object):
         data = re.search(r'(\d+)\.(\d+)-(RELEASE|STABLE|CURRENT|RC|PRERELEASE).*', freebsd_facts['distribution_release'])
         if 'trueos' in platform.version():
             freebsd_facts['distribution'] = 'TrueOS'
+
         if data:
             freebsd_facts['distribution_major_version'] = data.group(1)
             freebsd_facts['distribution_version'] = '%s.%s' % (data.group(1), data.group(2))
+
+        # Always look for into standard /etc/os-release file if it exists
+        os_release_exists, os_release_data = _get_os_release_data()
+
+        if os_release_exists != False:
+            freebsd_facts['distribution_os_name'] = os_release_data['os_name']
+            freebsd_facts['distribution_os_variant'] = os_release_data['os_variant']
+            freebsd_facts['distribution_os_cpe_name'] = os_release_data['os_cpe_name']
+
         return freebsd_facts
 
     def get_distribution_OpenBSD(self):
