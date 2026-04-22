@@ -1,5 +1,5 @@
 --- distribution.awx.py.orig	2026-04-22 11:01:29.872681677 -0400
-+++ distribution.py	2026-04-22 17:05:41.608608116 -0400
++++ distribution.py	2026-04-22 17:16:22.810123443 -0400
 @@ -45,6 +45,36 @@
      # file exists with some content
      return True
@@ -86,6 +86,15 @@
                       'Debian': ['Debian', 'Ubuntu', 'Raspbian', 'Neon', 'KDE neon',
                                  'Linux Mint', 'SteamOS', 'Devuan', 'Kali', 'Cumulus Linux',
                                  'Pop!_OS', 'Parrot', 'Pardus GNU/Linux', 'Uos', 'Deepin', 'OSMC'],
+@@ -524,7 +567,7 @@
+                      'Solaris': ['Solaris', 'Nexenta', 'OmniOS', 'OpenIndiana', 'SmartOS'],
+                      'Slackware': ['Slackware'],
+                      'Altlinux': ['Altlinux'],
+-                     'SGML': ['SGML'],
++                     'SMGL': ['SMGL'],
+                      'Gentoo': ['Gentoo', 'Funtoo'],
+                      'Alpine': ['Alpine'],
+                      'AIX': ['AIX'],
 @@ -617,6 +660,15 @@
          if data:
              freebsd_facts['distribution_major_version'] = data.group(1)
