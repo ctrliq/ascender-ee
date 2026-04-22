@@ -1,0 +1,113 @@
+--- distribution.awx.py.orig	2026-04-22 11:01:29.872681677 -0400
++++ distribution.py	2026-04-22 17:16:22.810123443 -0400
+@@ -45,6 +45,36 @@
+     # file exists with some content
+     return True
+ 
++def _get_os_release_data(allow_empty=False):
++    path = '/etc/os-release'
++
++    if not _file_exists(path, allow_empty=allow_empty):
++        return False, None
++
++    data = get_file_content(path)
++
++    os_name     = ""
++    os_variant  = ""
++    os_cpe_name = ""
++
++    for line in data.splitlines():
++        if re.search('^NAME=', line):
++            key, value = line.split('=', 1)
++
++            os_name = value.strip('"')
++
++        elif re.search('^VARIANT=', line):
++            key, value = line.split('=', 1)
++
++            os_variant = value.strip('"')
++
++        elif re.search('^CPE_NAME=', line):
++            key, value = line.split('=', 1)
++
++            os_cpe_name = value.strip('"')
++
++    return True, { 'os_name': os_name, 'os_variant': os_variant, 'os_cpe_name': os_cpe_name }
++
+ 
+ class DistributionFiles:
+     '''has-a various distro file parsers (os-release, etc) and logic for finding the right one.'''
+@@ -54,6 +84,7 @@
+     #  - have a function get_distribution_DISTNAME implemented
+     # keep names in sync with Conditionals page of docs
+     OSDIST_LIST = (
++        {'path': '/etc/ciq-release', 'name': 'RLC'},
+         {'path': '/etc/altlinux-release', 'name': 'Altlinux'},
+         {'path': '/etc/oracle-release', 'name': 'OracleLinux'},
+         {'path': '/etc/slackware-version', 'name': 'Slackware'},
+@@ -82,6 +113,7 @@
+     SEARCH_STRING = {
+         'OracleLinux': 'Oracle Linux',
+         'RedHat': 'Red Hat',
++        'RLC': 'Rocky Linux from CIQ',
+         'Altlinux': 'ALT',
+         'SMGL': 'Source Mage GNU/Linux',
+     }
+@@ -199,12 +231,23 @@
+             if parsed_dist_file:
+                 dist_file_facts['distribution'] = name
+                 dist_file_facts['distribution_file_path'] = path
++
+                 # distribution and file_variety are the same here, but distribution
+                 # will be changed/mapped to a more specific name.
+                 # ie, dist=Fedora, file_variety=RedHat
+                 dist_file_facts['distribution_file_variety'] = name
+                 dist_file_facts['distribution_file_parsed'] = parsed_dist_file
++
++                # Always look into the standard /etc/os-release file if it exists
++                os_release_exists, os_release_data = _get_os_release_data()
++
++                if os_release_exists != False:
++                    dist_file_facts['distribution_os_name'] = os_release_data['os_name']
++                    dist_file_facts['distribution_os_variant'] = os_release_data['os_variant']
++                    dist_file_facts['distribution_os_cpe_name'] = os_release_data['os_cpe_name']
++
+                 dist_file_facts.update(parsed_dist_file_facts)
++
+                 break
+ 
+         return dist_file_facts
+@@ -513,7 +556,7 @@
+                                 'Ascendos', 'CloudLinux', 'PSBM', 'OracleLinux', 'OVS',
+                                 'OEL', 'Amazon', 'Virtuozzo', 'XenServer', 'Alibaba',
+                                 'EulerOS', 'openEuler', 'AlmaLinux', 'Rocky', 'TencentOS',
+-                                'EuroLinux', 'Kylin Linux Advanced Server'],
++                                'EuroLinux', 'Kylin Linux Advanced Server', 'RLC'],
+                      'Debian': ['Debian', 'Ubuntu', 'Raspbian', 'Neon', 'KDE neon',
+                                 'Linux Mint', 'SteamOS', 'Devuan', 'Kali', 'Cumulus Linux',
+                                 'Pop!_OS', 'Parrot', 'Pardus GNU/Linux', 'Uos', 'Deepin', 'OSMC'],
+@@ -524,7 +567,7 @@
+                      'Solaris': ['Solaris', 'Nexenta', 'OmniOS', 'OpenIndiana', 'SmartOS'],
+                      'Slackware': ['Slackware'],
+                      'Altlinux': ['Altlinux'],
+-                     'SGML': ['SGML'],
++                     'SMGL': ['SMGL'],
+                      'Gentoo': ['Gentoo', 'Funtoo'],
+                      'Alpine': ['Alpine'],
+                      'AIX': ['AIX'],
+@@ -617,6 +660,15 @@
+         if data:
+             freebsd_facts['distribution_major_version'] = data.group(1)
+             freebsd_facts['distribution_version'] = '%s.%s' % (data.group(1), data.group(2))
++
++        # Always look into the standard /etc/os-release file if it exists
++        os_release_exists, os_release_data = _get_os_release_data()
++
++        if os_release_exists != False:
++            freebsd_facts['distribution_os_name'] = os_release_data['os_name']
++            freebsd_facts['distribution_os_variant'] = os_release_data['os_variant']
++            freebsd_facts['distribution_os_cpe_name'] = os_release_data['os_cpe_name']
++
+         return freebsd_facts
+ 
+     def get_distribution_OpenBSD(self):
