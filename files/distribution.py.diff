@@ -1,9 +1,9 @@
---- distribution.py.backup      2026-04-21 15:39:58.496829194 -0400
-+++ distribution.new.py 2026-04-21 15:44:30.893425940 -0400
+--- distribution.awx.py.orig	2026-04-22 11:01:29.872681677 -0400
++++ distribution.py	2026-04-22 16:42:21.587553907 -0400
 @@ -45,6 +45,36 @@
      # file exists with some content
      return True
-
+ 
 +def _get_os_release_data(allow_empty=False):
 +    path = '/etc/os-release'
 +
@@ -12,8 +12,8 @@
 +
 +    data = get_file_content(path)
 +
-+    os_name = ""
-+    os_variant = ""
++    os_name     = ""
++    os_variant  = ""
 +    os_cpe_name = ""
 +
 +    for line in data.splitlines():
@@ -34,7 +34,7 @@
 +
 +    return True, { 'os_name': os_name, 'os_variant': os_variant, 'os_cpe_name': os_cpe_name }
 +
-
+ 
  class DistributionFiles:
      '''has-a various distro file parsers (os-release, etc) and logic for finding the right one.'''
 @@ -54,6 +84,7 @@
@@ -64,7 +64,7 @@
                  dist_file_facts['distribution_file_variety'] = name
                  dist_file_facts['distribution_file_parsed'] = parsed_dist_file
 +
-+                # Always look  into the standard /etc/os-release file if it exists
++                # Always look for into standard /etc/os-release file if it exists
 +                os_release_exists, os_release_data = _get_os_release_data()
 +
 +                if os_release_exists != False:
@@ -75,14 +75,23 @@
                  dist_file_facts.update(parsed_dist_file_facts)
 +
                  break
-
+ 
          return dist_file_facts
+@@ -513,7 +556,7 @@
+                                 'Ascendos', 'CloudLinux', 'PSBM', 'OracleLinux', 'OVS',
+                                 'OEL', 'Amazon', 'Virtuozzo', 'XenServer', 'Alibaba',
+                                 'EulerOS', 'openEuler', 'AlmaLinux', 'Rocky', 'TencentOS',
+-                                'EuroLinux', 'Kylin Linux Advanced Server'],
++                                'EuroLinux', 'Kylin Linux Advanced Server', 'RLC'],
+                      'Debian': ['Debian', 'Ubuntu', 'Raspbian', 'Neon', 'KDE neon',
+                                 'Linux Mint', 'SteamOS', 'Devuan', 'Kali', 'Cumulus Linux',
+                                 'Pop!_OS', 'Parrot', 'Pardus GNU/Linux', 'Uos', 'Deepin', 'OSMC'],
 @@ -617,6 +660,15 @@
          if data:
              freebsd_facts['distribution_major_version'] = data.group(1)
              freebsd_facts['distribution_version'] = '%s.%s' % (data.group(1), data.group(2))
 +
-+        # Always look into the standard /etc/os-release file if it exists
++        # Always look for into standard /etc/os-release file if it exists
 +        os_release_exists, os_release_data = _get_os_release_data()
 +
 +        if os_release_exists != False:
@@ -91,5 +100,5 @@
 +            freebsd_facts['distribution_os_cpe_name'] = os_release_data['os_cpe_name']
 +
          return freebsd_facts
-
+ 
      def get_distribution_OpenBSD(self):
