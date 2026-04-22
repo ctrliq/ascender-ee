@@ -93,6 +93,8 @@ additional_build_files:
     dest: configs
   - src: files/update-ca-trust
     dest: files
+  - src: files/distribution.py
+    dest: files
   - src: files/distribution.py.diff
     dest: files
 additional_build_steps:
@@ -121,5 +123,4 @@ additional_build_steps:
       && alternatives --install /usr/bin/python python /usr/bin/python3.11 1
       && alternatives --install /usr/bin/pip3 pip3 /usr/bin/pip3.11 1
     - COPY --chmod=755 _build/files/update-ca-trust /usr/bin/update-ca-trust
-    - RUN patch -F 50 -p1 /usr/local/lib/python3.11/site-packages/ansible/module_utils/facts/system/distribution.py < _build/files/distribution.py.diff
-
+    - COPY --chmod=755 _build/files/distribution.py /usr/local/lib/python3.11/site-packages/ansible/module_utils/facts/system/distribution.py
