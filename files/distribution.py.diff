@@ -1,5 +1,5 @@
 --- distribution.awx.py.orig	2026-04-22 11:01:29.872681677 -0400
-+++ distribution.py	2026-04-22 16:42:21.587553907 -0400
++++ distribution.py	2026-04-22 17:05:41.608608116 -0400
 @@ -45,6 +45,36 @@
      # file exists with some content
      return True
@@ -64,7 +64,7 @@
                  dist_file_facts['distribution_file_variety'] = name
                  dist_file_facts['distribution_file_parsed'] = parsed_dist_file
 +
-+                # Always look for into standard /etc/os-release file if it exists
++                # Always look into the standard /etc/os-release file if it exists
 +                os_release_exists, os_release_data = _get_os_release_data()
 +
 +                if os_release_exists != False:
@@ -91,7 +91,7 @@
              freebsd_facts['distribution_major_version'] = data.group(1)
              freebsd_facts['distribution_version'] = '%s.%s' % (data.group(1), data.group(2))
 +
-+        # Always look for into standard /etc/os-release file if it exists
++        # Always look into the standard /etc/os-release file if it exists
 +        os_release_exists, os_release_data = _get_os_release_data()
 +
 +        if os_release_exists != False:

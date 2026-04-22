@@ -238,7 +238,7 @@ class DistributionFiles:
                 dist_file_facts['distribution_file_variety'] = name
                 dist_file_facts['distribution_file_parsed'] = parsed_dist_file
 
-                # Always look for into standard /etc/os-release file if it exists
+                # Always look into the standard /etc/os-release file if it exists
                 os_release_exists, os_release_data = _get_os_release_data()
 
                 if os_release_exists != False:
@@ -661,7 +661,7 @@ class Distribution(object):
             freebsd_facts['distribution_major_version'] = data.group(1)
             freebsd_facts['distribution_version'] = '%s.%s' % (data.group(1), data.group(2))
 
-        # Always look for into standard /etc/os-release file if it exists
+        # Always look into the standard /etc/os-release file if it exists
         os_release_exists, os_release_data = _get_os_release_data()
 
         if os_release_exists != False:
