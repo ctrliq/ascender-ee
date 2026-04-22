@@ -93,7 +93,7 @@ additional_build_files:
     dest: configs
   - src: files/update-ca-trust
     dest: files
-  - src: files/distribution.py
+  - src: files/distribution.py.diff
     dest: files
 additional_build_steps:
   append_base:
