@@ -53,9 +53,9 @@ def _get_os_release_data(allow_empty=False):
 
     data = get_file_content(path)
 
-    os_name     = '';
-    os_variant  = '';
-    os_cpe_name = ''
+    os_name     = ""
+    os_variant  = ""
+    os_cpe_name = ""
 
     for line in data.splitlines():
         if re.search('^NAME=', line):
