@@ -97,6 +97,8 @@ additional_build_files:
     dest: files
   - src: files/distribution.py.diff
     dest: files
+  - src: files/git.py.diff
+    dest: files
 additional_build_steps:
   append_base:
     - RUN $PYCMD -m pip install -U pip
@@ -124,3 +126,6 @@ additional_build_steps:
       && alternatives --install /usr/bin/pip3 pip3 /usr/bin/pip3.11 1
     - COPY --chmod=755 _build/files/update-ca-trust /usr/bin/update-ca-trust
     - COPY --chmod=755 _build/files/distribution.py /usr/local/lib/python3.11/site-packages/ansible/module_utils/facts/system/distribution.py
+    # Backport ansible/ansible#86692: git module honors non-master submodule branches (ctrliq/ascender#592)
+    - COPY _build/files/git.py.diff /tmp/git.py.diff
+    - RUN cd /usr/local/lib/python3.11/site-packages/ansible/modules && git apply -p0 /tmp/git.py.diff
