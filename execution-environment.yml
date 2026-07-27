@@ -7,8 +7,8 @@ options:
   package_manager_path: /usr/bin/dnf
 dependencies:
   python_interpreter:
-    package_system: python3.11
-    python_path: /usr/bin/python3.11
+    package_system: python3.12
+    python_path: /usr/bin/python3.12
   ansible_core:
     # Avoid Ansible 2.17 and above as it dropped support for Python 3.6, so it will not work with dnf on EL8 or below machines
     package_pip: ansible-core>=2.16.14,<2.17
@@ -61,8 +61,8 @@ dependencies:
     krb5-workstation [platform:rpm]
     libcurl-devel [platform:rpm compile]
     podman-remote [platform:rpm]
-    python3.11-devel [platform:rpm compile]
-    python3.11-rpm [platform:rpm epel]
+    python3.12-devel [platform:rpm compile]
+    python3.12-rpm [platform:rpm epel]
     sshpass [platform:rpm]
     subversion [platform:rpm]
     sudo [platform:rpm]
@@ -119,13 +119,13 @@ additional_build_steps:
     - RUN mkdir -p $($PYCMD -m site --user-site | sed "s|$HOME|$(pwd)|")
     - RUN chmod -R ug+rwx $($PYCMD -m site --user-site | sed "s|$HOME|$(pwd)|" | cut -d '/' -f1,2,3)
     - RUN dnf update -y && dnf clean all
-    # SymLink `python` -> `python3.11` and `python3` -> `python3.11` and `pip3` -> `pip3.11`
+    # SymLink `python` -> `python3.12` and `python3` -> `python3.12` and `pip3` -> `pip3.12`
     - >-
-      RUN alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
-      && alternatives --install /usr/bin/python python /usr/bin/python3.11 1
-      && alternatives --install /usr/bin/pip3 pip3 /usr/bin/pip3.11 1
+      RUN alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
+      && alternatives --install /usr/bin/python python /usr/bin/python3.12 1
+      && alternatives --install /usr/bin/pip3 pip3 /usr/bin/pip3.12 1
     - COPY --chmod=755 _build/files/update-ca-trust /usr/bin/update-ca-trust
-    - COPY --chmod=755 _build/files/distribution.py /usr/local/lib/python3.11/site-packages/ansible/module_utils/facts/system/distribution.py
+    - COPY --chmod=755 _build/files/distribution.py /usr/local/lib/python3.12/site-packages/ansible/module_utils/facts/system/distribution.py
     # Backport ansible/ansible#86692: git module honors non-master submodule branches (ctrliq/ascender#592)
     - COPY _build/files/git.py.diff /tmp/git.py.diff
-    - RUN cd /usr/local/lib/python3.11/site-packages/ansible/modules && git apply -p0 /tmp/git.py.diff
+    - RUN cd /usr/local/lib/python3.12/site-packages/ansible/modules && git apply -p0 /tmp/git.py.diff
