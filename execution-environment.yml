@@ -49,6 +49,8 @@ dependencies:
         version: ">=3.2.1"
       - name: theforeman.foreman
         version: ">=5.4.0"
+      - name: vmware.vmware
+        version: ">=2.9.0"
   system: |
     crypto-policies-scripts
     epel-release [platform:rpm]
@@ -83,6 +85,7 @@ dependencies:
     requests-credssp
     six
     toml
+    vsphere-automation-sdk-python
   exclude:
     system:
       - python3
