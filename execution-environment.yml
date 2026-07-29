@@ -85,7 +85,7 @@ dependencies:
     requests-credssp
     six
     toml
-    vsphere-automation-sdk-python
+    git+https://github.com/vmware/vsphere-automation-sdk-python.git
   exclude:
     system:
       - python3
