@@ -52,6 +52,7 @@ dependencies:
       - name: vmware.vmware
         version: ">=2.9.0"
   system: |
+    buildah [platform:rpm]
     crypto-policies-scripts
     epel-release [platform:rpm]
     findutils [platform:rpm]
@@ -70,6 +71,7 @@ dependencies:
     sudo [platform:rpm]
     unzip [platform:rpm]
   python: |
+    ansible-builder
     ansible-sign
     jmespath
     ncclient
