@@ -49,7 +49,10 @@ dependencies:
         version: ">=3.2.1"
       - name: theforeman.foreman
         version: ">=5.4.0"
+      - name: vmware.vmware
+        version: ">=2.9.0"
   system: |
+    buildah [platform:rpm]
     crypto-policies-scripts
     epel-release [platform:rpm]
     findutils [platform:rpm]
@@ -68,6 +71,7 @@ dependencies:
     sudo [platform:rpm]
     unzip [platform:rpm]
   python: |
+    ansible-builder
     ansible-sign
     jmespath
     ncclient
