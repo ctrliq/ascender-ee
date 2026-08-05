@@ -17,6 +17,8 @@ dependencies:
   galaxy: |
     ---
     collections:
+      - name: ctrliq.ascender
+        version: "25.5.1"
       - name: amazon.aws
         version: "9.5.0"
       - name: ansible.posix
