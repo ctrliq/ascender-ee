@@ -1,0 +1,24 @@
+---
+# Security updates arrive without this file; what it adds is version updates.
+#
+# Only github-actions is listed. requirements.txt holds a single VCS requirement
+# pinned to a branch, ansible-builder from devel, which has no version for
+# Dependabot to bump, and everything the image is actually built from, the base
+# image, ansible-core, ansible-runner and the collections, lives in
+# execution-environment.yml, which it does not read.
+#
+# No groups: key on purpose, so every dependency comes as its own pull request.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    # every uses: is pinned to a SHA, and Dependabot keeps the version comment
+    # next to it in step
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "ci"
+    labels:
+      - dependencies
+      - ci
