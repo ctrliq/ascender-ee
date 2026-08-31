@@ -6,9 +6,20 @@ on:
       - created
 
 jobs:
-  release:
-    runs-on: ubuntu-24.04
-    name: Release
+  # Build each architecture natively on its own runner. Building arm64 on an
+  # amd64 runner under QEMU emulation takes hours; natively it takes minutes.
+  # Each build pushes an arch-suffixed tag which the manifest job below
+  # combines into the versioned and latest multi-arch manifests.
+  build_and_push_arch:
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    name: Build and push ${{ github.event.release.tag_name }}-${{ matrix.arch }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
@@ -25,14 +36,26 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
         run: |
-          tox -e docker -- --tag=ghcr.io/ctrliq/ascender-ee:${{ github.event.release.tag_name }}
+          tox -e docker -- --tag=ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }}-${{ matrix.arch }}
 
-      - name: Apply latest tag
-        run: |
-          docker tag ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }} ghcr.io/${{ github.repository_owner }}/ascender-ee:latest
-
-      - name: Push images
+      - name: Push image
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-          docker push ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }}
-          docker push ghcr.io/${{ github.repository_owner }}/ascender-ee:latest
+          docker push ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }}-${{ matrix.arch }}
+
+  push_manifests:
+    needs: build_and_push_arch
+    runs-on: ubuntu-24.04
+    name: Combine per-arch images into the release and latest manifests
+    steps:
+      - name: Push multi-arch manifests
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+          docker buildx imagetools create \
+            -t ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }} \
+            ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }}-amd64 \
+            ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }}-arm64
+          docker buildx imagetools create \
+            -t ghcr.io/${{ github.repository_owner }}/ascender-ee:latest \
+            ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }}-amd64 \
+            ghcr.io/${{ github.repository_owner }}/ascender-ee:${{ github.event.release.tag_name }}-arm64

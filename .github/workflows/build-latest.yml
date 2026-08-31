@@ -10,9 +10,21 @@ on:
     - cron: '45 3 * * *'
 
 jobs:
-  build_and_push_latest:
-    runs-on: ubuntu-24.04
-    name: Build and push latest tag from devel and on new commits
+  # Build each architecture natively on its own runner. Building arm64 on an
+  # amd64 runner under QEMU emulation takes hours; natively it takes minutes.
+  # Each build pushes an arch-suffixed tag which the manifest job below
+  # combines into a single multi-arch :latest, so the parallel builds never
+  # clobber each other.
+  build_and_push_arch:
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    name: Build and push latest-${{ matrix.arch }} from devel and on new commits
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
@@ -29,9 +41,22 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
         run: |
-          tox -e docker -- --tag=ghcr.io/${{ github.repository_owner }}/ascender-ee:latest
+          tox -e docker -- --tag=ghcr.io/${{ github.repository_owner }}/ascender-ee:latest-${{ matrix.arch }}
 
-      - name: Push images
+      - name: Push image
         run: |
          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-         docker push ghcr.io/${{ github.repository_owner }}/ascender-ee:latest
+         docker push ghcr.io/${{ github.repository_owner }}/ascender-ee:latest-${{ matrix.arch }}
+
+  push_latest_manifest:
+    needs: build_and_push_arch
+    runs-on: ubuntu-24.04
+    name: Combine per-arch images into the latest manifest
+    steps:
+      - name: Push multi-arch manifest
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+          docker buildx imagetools create \
+            -t ghcr.io/${{ github.repository_owner }}/ascender-ee:latest \
+            ghcr.io/${{ github.repository_owner }}/ascender-ee:latest-amd64 \
+            ghcr.io/${{ github.repository_owner }}/ascender-ee:latest-arm64
