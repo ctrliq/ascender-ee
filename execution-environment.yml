@@ -87,6 +87,11 @@ dependencies:
     pyyaml
     receptorctl
     requests-credssp
+    # The vSphere Automation SDK (pulled in by community.vmware/vmware.vmware)
+    # imports pkg_resources at runtime, which setuptools >= 81 no longer ships.
+    # Without this pin every com.vmware.* / vmware.vapi import fails and the
+    # VMware modules report the SDK as missing.
+    setuptools<81
     six
     toml
   exclude:
@@ -135,3 +140,7 @@ additional_build_steps:
     # Backport ansible/ansible#86692: git module honors non-master submodule branches (ctrliq/ascender#592)
     - COPY _build/files/git.py.diff /tmp/git.py.diff
     - RUN cd /usr/local/lib/python3.12/site-packages/ansible/modules && git apply -p0 /tmp/git.py.diff
+    # Remove the legacy setuptools namespace-package shims shipped by the NSX SDK
+    # wheels; PEP 420 resolves the com/vmware namespaces without them, and they
+    # break pip's isolated build environment for any source build (ctrliq/ascender#767)
+    - RUN rm -f /usr/local/lib/python3.12/site-packages/*-nspkg.pth
