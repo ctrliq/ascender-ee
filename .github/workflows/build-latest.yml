@@ -13,6 +13,14 @@ permissions:
   contents: read
   packages: write
 
+# Overlapping runs (e.g. a push during the scheduled build) could interleave
+# their latest-* pushes and produce a mixed-commit :latest manifest, since the
+# manifest job combines whatever the arch tags point to in the registry.
+# Newest run wins; a cancelled run's partial pushes are overwritten by it.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   # Build each architecture natively on its own runner. Building arm64 on an
   # amd64 runner under QEMU emulation takes hours; natively it takes minutes.
