@@ -5,6 +5,10 @@ on:
     types:
       - created
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   # Build each architecture natively on its own runner. Building arm64 on an
   # amd64 runner under QEMU emulation takes hours; natively it takes minutes.
