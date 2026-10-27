@@ -18,7 +18,7 @@ dependencies:
     ---
     collections:
       - name: ctrliq.ascender
-        version: "25.6.2"
+        version: "25.6.3"
       - name: amazon.aws
         version: "9.5.0"
       - name: ansible.posix
