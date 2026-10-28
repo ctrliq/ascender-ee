@@ -75,6 +75,7 @@ dependencies:
   python: |
     ansible-builder
     ansible-sign
+    git+https://github.com/ctrliq/ascender-kit.git@25.6.2
     jmespath
     ncclient
     paramiko
