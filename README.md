@@ -1,6 +1,6 @@
 # Ascender Execution Environment
 
-[![CI](https://github.com/ctrliq/ascender-ee/actions/workflows/ci.yml/badge.svg)](https://github.com/ctrliq/ascender-ee/actions/workflows/ci.yml)
+[![ascender-ee CI](https://img.shields.io/github/actions/workflow/status/ctrliq/ascender-ee/ci.yml?branch=main&label=ascender-ee%20CI)](https://github.com/ctrliq/ascender-ee/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE.md)
 [![Base](https://img.shields.io/badge/base-Rocky%20Linux%209-blue.svg)](https://rockylinux.org)
 
@@ -67,6 +67,7 @@ CI builds the image on every pull request, which is the check that matters here.
 | [ascender-ee](https://github.com/ctrliq/ascender-ee) | Default execution environment image for Ascender jobs |
 | [ascender-kit](https://github.com/ctrliq/ascender-kit) | The `ascender` command line client and Python API library |
 | [ascender-collection](https://github.com/ctrliq/ascender-collection) | The `ctrliq.ascender` Ansible collection for a controller |
+| [ascender-mcp](https://github.com/ctrliq/ascender-mcp) | MCP server that lets AI agents drive Ascender through its REST API |
 | [ascender-ledger](https://github.com/ctrliq/ascender-ledger) | Reporting tool for host facts and playbook changes |
 | [ascender-galaxy-proxy](https://github.com/ctrliq/ascender-galaxy-proxy) | Caching proxy for Ansible Galaxy collection downloads |
 | [ascender-playbooks](https://github.com/ctrliq/ascender-playbooks) | Example playbooks for use with Ascender |
